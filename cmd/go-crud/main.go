@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/arishazmat/go-crud/internal/config"
+	todo "github.com/arishazmat/go-crud/internal/http/handlers/students"
 )
 
 func main() {
@@ -20,9 +21,7 @@ func main() {
 	// set router
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to todo api's"))
-	})
+	router.HandleFunc("POST /api/todos", todo.New())
 
 	// server setup
 
