@@ -4,29 +4,31 @@ import (
 	"flag"
 	"log"
 	"os"
+
 	"github.com/ilyakaznacheev/cleanenv"
 )
+
 type HttpServer struct {
-	Addr string
+	Addr string `yaml:"address" env-required:"true"`
 }
 
 type Config struct {
-	Env string `yaml:"env" env:"ENV" env-require:"true" env-default:"production"`
+	Env         string `yaml:"env" env:"ENV" env-require:"true"`
 	StoragePath string `yaml:"storage_path" env-required:"true"`
-	HttpServer `yaml:"http_server"`
+	HttpServer  `yaml:"http_server"`
 }
 
-fucn MustLoad() *Config {
+func MustLoad() *Config {
 	var configPath string
-	cofigPath = os.Getenv("CONFIG_PATH")
+	configPath = os.Getenv("CONFIG_PATH")
 
 	if configPath == "" {
-		flags := flag.string("config","","path to config file")
+		flags := flag.String("config", "", "path to config file")
 		flag.Parse()
 
 		configPath = *flags
 
-		if configpath == "" {
+		if configPath == "" {
 			log.Fatal("config path is required")
 		}
 	}
