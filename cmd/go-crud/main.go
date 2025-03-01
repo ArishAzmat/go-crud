@@ -12,16 +12,26 @@ import (
 
 	"github.com/arishazmat/go-crud/internal/config"
 	todo "github.com/arishazmat/go-crud/internal/http/handlers/students"
+	"github.com/arishazmat/go-crud/internal/storage/sqlite"
 )
 
 func main() {
 	// load config
 	cfg := config.MustLoad()
 	// connect to db
+
+	storage, err := sqlite.New(cfg)
+
+	if err != nil {
+		log.Fatal("Failed to connect to db", slog.String("error", err.Error()))
+	}
+
+	slog.Info("Storage initialized", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
 	// set router
 	router := http.NewServeMux()
 
-	router.HandleFunc("POST /api/todos", todo.New())
+	router.HandleFunc("POST /api/todos", todo.New(storage))
+	router.HandleFunc("GET /api/todos/{id}", todo.GetById(storage))
 
 	// server setup
 
@@ -50,7 +60,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err := server.Shutdown(ctx)
+	err = server.Shutdown(ctx)
 
 	/* if err := server.Shutdown(ctx); err != nil {
 		slog.Error("Failed to shutdown server: ", slog.String("error", err.Error()))
