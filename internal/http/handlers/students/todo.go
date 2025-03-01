@@ -82,3 +82,23 @@ func GetList(storage storage.Storage) http.HandlerFunc {
 		response.WriteJson(w, http.StatusOK, todos)
 	}
 }
+
+func DeleteById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("DeleteById called", slog.String("id", id))
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		_, err = storage.DeleteById(intId)
+
+		if err != nil {
+			slog.Error("Failed to delete todo", slog.String("id ", id))
+			response.WriteJson(w, http.StatusInternalServerError, response.GeneralError(err))
+		}
+		response.WriteJson(w, http.StatusOK, map[string]string{"message": "Todo deleted successfully"})
+
+	}
+}

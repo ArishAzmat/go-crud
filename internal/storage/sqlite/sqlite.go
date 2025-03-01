@@ -3,6 +3,7 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	"github.com/arishazmat/go-crud/internal/config"
 	"github.com/arishazmat/go-crud/internal/types"
@@ -103,4 +104,21 @@ func (s *Sqlite) GetTodos() ([]types.Todo, error) {
 		todos = append(todos, todo)
 	}
 	return todos, nil
+}
+
+func (s *Sqlite) DeleteById(id int64) (int64, error) {
+	stmt, err := s.Db.Prepare("DELETE from todos WHERE id = ?")
+	if err != nil {
+		return 0, err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return 0, err
+	}
+	slog.Info("Deleted todo with id", slog.String("id", fmt.Sprint(id)))
+	return 0, nil
+
 }

@@ -6,4 +6,5 @@ type Storage interface {
 	CreateTodo(title string, description string) (int64, error)
 	GetTodoById(id int64) (types.Todo, error)
 	GetTodos() ([]types.Todo, error)
+	DeleteById(id int64) (int64, error)
 }
