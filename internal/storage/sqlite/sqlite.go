@@ -76,3 +76,31 @@ func (s *Sqlite) GetTodoById(id int64) (types.Todo, error) {
 
 	return todo, nil
 }
+
+func (s *Sqlite) GetTodos() ([]types.Todo, error) {
+	stmt, err := s.Db.Prepare("SELECT id, title, description from todos")
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var todos []types.Todo
+
+	for rows.Next() {
+		var todo types.Todo
+		err := rows.Scan(&todo.Id, &todo.Title, &todo.Description)
+		if err != nil {
+			return nil, err
+		}
+		todos = append(todos, todo)
+	}
+	return todos, nil
+}

@@ -68,3 +68,17 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 		response.WriteJson(w, http.StatusOK, todo)
 	}
 }
+
+func GetList(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		slog.Info("Getting all todos")
+		todos, err := storage.GetTodos()
+
+		if err != nil {
+			slog.Error("Failed to get todos")
+			response.WriteJson(w, http.StatusInternalServerError, err)
+			return
+		}
+		response.WriteJson(w, http.StatusOK, todos)
+	}
+}

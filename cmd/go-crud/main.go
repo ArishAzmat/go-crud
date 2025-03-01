@@ -32,6 +32,7 @@ func main() {
 
 	router.HandleFunc("POST /api/todos", todo.New(storage))
 	router.HandleFunc("GET /api/todos/{id}", todo.GetById(storage))
+	router.HandleFunc("GET /api/todos", todo.GetList(storage))
 
 	// server setup
 
